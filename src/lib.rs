@@ -9,11 +9,12 @@ pub use test::Bencher;
 static FACTOR_SRC: &'static str =
     include_str!("../bf-src/factor.bf");
 
-static MANDELBROT_SRC: &'static str =
-    include_str!("../bf-src/mandelbrot.bf");
-
 static HELLO_SRC: &'static str =
     include_str!("../bf-src/hello-world.bf");
+
+#[cfg(feature = "long")]
+static MANDELBROT_SRC: &'static str =
+    include_str!("../bf-src/mandelbrot.bf");
 
 fn bf_interpret_run(program: &str, input: &[u8]) -> Vec<u8> {
     use bf::traits::Interpretable;
@@ -101,136 +102,44 @@ mod it_works {
     }
 }
 
-#[cfg(test)]
-mod empty_program_bench {
-    use super::*;
+macro_rules! bench_bfs {
+    ($mod_name:ident, $program:expr, $input:expr) =>
+    {
+        #[cfg(test)]
+        mod $mod_name {
+            use super::*;
 
-    #[bench]
-    fn bf_interpret(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_interpret_run("", b"")
-        });
-    }
+            #[bench]
+            fn bf_interpret(bench: &mut Bencher) {
+                bench.iter(|| {
+                    bf_interpret_run($program, $input)
+                });
+            }
 
-    #[bench]
-    fn bf_jit(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_jit_run("", b"")
-        });
-    }
+            #[bench]
+            fn bf_jit(bench: &mut Bencher) {
+                bench.iter(|| {
+                    bf_jit_run($program, $input)
+                });
+            }
 
-    #[bench]
-    fn brainfuck(bench: &mut Bencher) {
-        bench.iter(|| {
-            brainfuck_run("", b"")
-        });
-    }
-}
-#[cfg(test)]
-mod hello_bench {
-    use super::*;
-
-    #[bench]
-    fn bf_interpret(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_interpret_run(HELLO_SRC, b"")
-        });
-    }
-
-    #[bench]
-    fn bf_jit(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_jit_run(HELLO_SRC, b"")
-        });
-    }
-
-    #[bench]
-    fn brainfuck(bench: &mut Bencher) {
-        bench.iter(|| {
-            brainfuck_run(HELLO_SRC, b"")
-        });
+            #[bench]
+            fn brainfuck(bench: &mut Bencher) {
+                bench.iter(|| {
+                    brainfuck_run($program, $input)
+                });
+            }
+        }
     }
 }
 
-#[cfg(test)]
-mod factor_1_000_000 {
-    use super::*;
+bench_bfs!(empty_program, "", b"");
+bench_bfs!(hello, HELLO_SRC, b"");
+bench_bfs!(factor_1_000_000, FACTOR_SRC, b"1000000\n");
 
-    const FACTOR_INPUT: &'static [u8] = b"1000000\n";
+#[cfg(feature = "long")]
+bench_bfs!(factor_179_424_691, FACTOR_SRC, b"179424691\n");
 
-    #[bench]
-    fn bf_interpret(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_interpret_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-
-    #[bench]
-    fn bf_jit(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_jit_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-
-    #[bench]
-    fn brainfuck(bench: &mut Bencher) {
-        bench.iter(|| {
-            brainfuck_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-}
-
-#[cfg(all(test, feature = "long"))]
-mod factor_179_424_691 {
-    use super::*;
-
-    const FACTOR_INPUT: &'static [u8] = b"179424691\n";
-
-    #[bench]
-    fn bf_interpret(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_interpret_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-
-    #[bench]
-    fn bf_jit(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_jit_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-
-    #[bench]
-    fn brainfuck(bench: &mut Bencher) {
-        bench.iter(|| {
-            brainfuck_run(FACTOR_SRC, FACTOR_INPUT)
-        });
-    }
-}
-
-#[cfg(all(test, feature = "long"))]
-mod mandelbrot_bench {
-    use super::*;
-
-    #[bench]
-    fn bf_interpret(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_interpret_run(MANDELBROT_SRC, b"")
-        });
-    }
-
-    #[bench]
-    fn bf_jit(bench: &mut Bencher) {
-        bench.iter(|| {
-            bf_jit_run(MANDELBROT_SRC, b"")
-        });
-    }
-
-    #[bench]
-    fn brainfuck(bench: &mut Bencher) {
-        bench.iter(|| {
-            brainfuck_run(MANDELBROT_SRC, b"")
-        });
-    }
-}
+#[cfg(feature = "long")]
+bench_bfs!(mandelbrot, MANDELBROT_SRC, b"");
 

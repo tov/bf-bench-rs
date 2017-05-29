@@ -40,13 +40,13 @@ fn bf_jit_run(program: &str, input: &[u8]) -> Vec<u8> {
 fn brainfuck_run(program: &str, input: &[u8]) -> Vec<u8> {
     use brainfuck::program::Program;
     use brainfuck::Interpreter;
-    use brainfuck::tape::VecTape;
+    use brainfuck::tape::Mod256ArrayTape;
 
     let mut reader = input;
     let mut writer = Vec::new();
     let program = Program::parse(program).unwrap();
     {
-        let mut interpreter = Interpreter::<VecTape>::new(program, &mut reader, &mut writer);
+        let mut interpreter = Interpreter::<Mod256ArrayTape>::new(program, &mut reader, &mut writer);
         interpreter.run().unwrap();
     }
     writer

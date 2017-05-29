@@ -23,4 +23,4 @@ long = []
 
 [dependencies]
 bf = "0.3"
-brainfuck = "0.2"
+brainfuck = { git = "https://github.com/tov/brainfuck" }

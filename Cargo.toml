@@ -1,0 +1,22 @@
+[package]
+name = "bf-bench"
+version = "0.1.0"
+authors = ["Jesse A. Tov <jesse.tov@gmail.com>"]
+description = "Benchmarks for (Rust) Brainfuck implementations"
+repository = "https://github.com/tov/bf-bench-rs"
+homepage = "https://github.com/tov/bf-bench-rs"
+readme = "README.md"
+license = "MIT"
+keywords = ["brainfuck", "interpreters", "benchmarks"]
+
+# [badges]
+# travis-ci = { repository = "tov/bf-rs" }
+
+[features]
+default = ["bf-jit"]
+
+bf-jit = ["bf/jit"]
+
+[dependencies]
+bf = "0.3"
+brainfuck = "0.2"

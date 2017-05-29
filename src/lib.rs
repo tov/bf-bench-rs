@@ -18,10 +18,10 @@ static MANDELBROT_SRC: &'static str =
 
 fn bf_interpret_run(program: &str, input: &[u8]) -> Vec<u8> {
     use bf::traits::Interpretable;
+    use bf::peephole::PeepholeCompilable;
 
     let program = bf::ast::parse_program(program.as_bytes()).unwrap();
-    let program = bf::rle::compile(&program);
-    let program = bf::peephole::compile(&program);
+    let program = program.peephole_compile();
 
     program.interpret_memory(None, input).unwrap()
 }
@@ -29,11 +29,10 @@ fn bf_interpret_run(program: &str, input: &[u8]) -> Vec<u8> {
 #[cfg(feature = "bf-jit")]
 fn bf_jit_run(program: &str, input: &[u8]) -> Vec<u8> {
     use bf::traits::Interpretable;
+    use bf::jit::JitCompilable;
 
     let program = bf::ast::parse_program(program.as_bytes()).unwrap();
-    let program = bf::rle::compile(&program);
-    let program = bf::peephole::compile(&program);
-    let program = bf::jit::compile(&program, true);
+    let program = program.jit_compile(true);
 
     program.interpret_memory(None, input).unwrap()
 }

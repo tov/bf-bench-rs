@@ -22,5 +22,5 @@ bf-jit = ["bf/jit"]
 long = []
 
 [dependencies]
-bf = "^0.3.3"
+bf = "^0.4.0"
 brainfuck = { git = "https://github.com/tov/brainfuck" }

@@ -15,7 +15,11 @@ keywords = ["brainfuck", "interpreters", "benchmarks"]
 [features]
 default = ["bf-jit"]
 
+# Uses the bf JIT
 bf-jit = ["bf/jit"]
+
+# Runs the long-running benches
+long = []
 
 [dependencies]
 bf = "0.3"
